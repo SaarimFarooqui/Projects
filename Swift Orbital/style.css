@@ -9,10 +9,30 @@
     padding: 10px;
 }
 .navbar{
-    background: linear-gradient(to right,rgb(255, 0, 85),rgb(195, 0, 255),rgb(255, 0, 85));
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    background: linear-gradient(to right,rgb(25, 0, 255),rgb(0, 195, 255),rgb(25, 0, 255));
     height: 10vh;
     width: 90vw;
     border: 0px;
     border-radius: 35px;
 }
-
+.items{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+.navItem{
+    text-decoration: none;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    margin: 0px 20px;
+    border: 0px;
+    border-radius: 25px;
+    transition: all 0.3s ease-in-out 0.1s;
+}
+.navItem:hover{
+    transform: translateY(-10px)
+}
