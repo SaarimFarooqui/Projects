@@ -31,8 +31,8 @@
     margin: 0px 20px;
     border: 0px;
     border-radius: 25px;
-    transition: all 0.3s ease-in-out 0.1s;
+    transition: all 0.3s ease-in-out 0.05s;
 }
 .navItem:hover{
-    transform: translateY(-10px)
+    transform: translateY(-5px)
 }
