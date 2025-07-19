@@ -25,14 +25,16 @@
 }
 .navItem{
     text-decoration: none;
+    padding: 20px 0px;
     color: white;
     font-size: 18px;
     font-weight: bold;
     margin: 0px 20px;
     border: 0px;
-    border-radius: 25px;
+    border-radius: 15px;
     transition: all 0.3s ease-in-out 0.05s;
 }
 .navItem:hover{
-    transform: translateY(-5px)
+    transform: translateY(-15px);
+    padding:35px 0px;
 }
