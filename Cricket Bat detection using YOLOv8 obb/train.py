@@ -11,5 +11,5 @@ model.train(
     device = 0,
     name = "bestBat_OBB",
     project = "model",
-    save = true 
+    save = True 
     )
