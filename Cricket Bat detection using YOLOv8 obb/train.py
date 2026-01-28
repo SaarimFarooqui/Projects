@@ -10,6 +10,6 @@ model.train(
     batch = 16,
     device = 0,
     name = "bestBat_OBB",
-    project = "result"
-    save = true
-)
+    project = "model",
+    save = true 
+    )
