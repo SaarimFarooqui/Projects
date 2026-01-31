@@ -1,30 +1,39 @@
-import nltk
 from nltk.corpus import stopwords
-from nltk.tokenize import word_tokenize, sent_tokenize
+from nltk.tokenize import word_tokenize
+
+stop_words = set(stopwords.words('english')) 
+
+# row_of_words returns a list of words in lower case which are alpha-numeric and not included in stop words.
+def row_of_words(single_document):
+  words = [word.lower() for word in word_tokenize(single_document) if word not in stop_words and word.isalnum()]
+  return words
+
+def table_of_words(documents):
+  table_of_elements = []
+  for document in documents:
+    table_of_elements.append(row_of_words(document))
+  return table_of_elements
+
+# unique_words is a function that extracts unique words from table and returns a list
+def unique_words(table):
+  u_words = []
+  for wordlist in table:
+    for word in wordlist:
+      if word not in u_words:
+        u_words.append(word)
+  return u_words
 
 document1 = "I have been playing video games since this morning."
 document2 = "My favourite game has always been GTAV. It is an amazing game"
 document3 = "Through online games, people can collectively solve large-scale computational problems."
 document4 = "I am afraid gaming might affect my academic performace"
+documents = [document1, document2, document3, document4]
 
-documents = [document1, document2, document3]
+table = table_of_words(documents)
 
-#The function get_all_words() takes list of all documents, tokenizes all words, removes stop words and non-alpha numeric words and returns a list of those pre-processed words
+extracted = unique_words(table)
 
-def get_all_words(documents): 
-  merged_documents = ""
-  for document in documents:
-    document = document.lower() + " "
-    merged_documents += document 
-  #stopwords stored in stop_words
-  stop_words = set(stopwords.words('english')) 
-  list_of_words = [ word for word in word_tokenize(merged_documents) if word not in stop_words and word.isalnum()]
-  return list_of_words
-  
+empty_table = [[0 for _ in range(len(documents))] for _ in range(len(extracted))]
 
-def tf_idf(documents):
-  l = get_all_words(documents)
-
-result = tf_idf(documents)
-
-print(result)
+for i in empty_table:
+  print(i)
