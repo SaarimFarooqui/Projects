@@ -1,14 +1,12 @@
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
-from collections import defaultdict
-
+import pandas as pd
 stop_words = set(stopwords.words('english')) 
 
 #row_of_words returns a list of words in lower case which are alpha-numeric and not included in stop words.
 def row_of_words(single_document):
-  words = [word.lower() for word in word_tokenize(single_document) if word not in stop_words and word.isalnum()]
+  words = [word for word in word_tokenize(single_document.lower()) if word not in stop_words and word.isalnum()]
   return words
-
 
 #The function table_of_words uses above function row_of_words to generate lists of  pre-processed words of each document. Each list contains preprocessed words from each document,  means no of lists = no of documents. These lists are the appended into another list which results into a lists within a list. Which serves a table.
 def table_of_words(documents):
@@ -25,17 +23,8 @@ def unique_words(table):
       if word not in u_words:
         u_words.append(word)
   return u_words
-
-#This function
-def word_frequency(list_uniquewords, row_words):
-  document_dictionary = defaultdict(int)
   
-  for i in list_uniquewords:
-    document_dictionary[i] = 0
-        
-  
-  
-def frequency_table(list_documents, list_uniquewords):
+def frequency_table(list_documents, list_uniquewords, table_of_words):
   # The number of documents + 1 = number of columns.
   # The number of unique words + 1 = number of rows.
   frequency_table = [[0 for _ in range(len(list_documents)+1)] for _ in range(len(list_uniquewords)+1)]
@@ -46,7 +35,11 @@ def frequency_table(list_documents, list_uniquewords):
     
   for index, word in enumerate(list_documents):
     frequency_table[0][index+1] = f"DOCUMENT {index+1}"
-    
+  
+  for wordIndex, word in enumerate(list_uniquewords):
+    for docIndex, row in enumerate(table_of_words):
+      frequency_table[wordIndex+1][docIndex+1] = round(row.count(word) / len(row),3)
+      
   return frequency_table
 
 document1 = "I have been playing video games since this morning."
@@ -57,8 +50,7 @@ documents = [document1, document2, document3, document4]
 
 table = table_of_words(documents)
 uniquewords = unique_words(table)
+freq_table = frequency_table(documents, uniquewords, table)
 
-freq_table = frequency_table(documents, uniquewords)
-
-for i in freq_table:
-  print(i)
+df = pd.DataFrame(freq_table)
+print(df)
