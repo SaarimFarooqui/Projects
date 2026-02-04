@@ -1,6 +1,7 @@
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 import pandas as pd
+import math
 from collections import defaultdict
 
 stop_words = set(stopwords.words('english')) 
@@ -53,7 +54,11 @@ def document_frequency_table(table):
     doc_freq_dict[word] += 1
   return doc_freq_dict
   
-  
+def inverse_document_frequency(documents ,doc_freq):
+  inv_doc_freq = defaultdict(float)
+  for key, value in doc_freq.items():
+    inv_doc_freq[key] = round(math.log10(len(documents)/value),3)
+  return inv_doc_freq
 
 document1 = "I have been playing video games since this morning."
 document2 = "My favourite game has always been GTAV. It is an amazing game"
@@ -64,7 +69,8 @@ documents = [document1, document2, document3, document4]
 table = table_of_words(documents)
 uniquewords = unique_words(table)
 freq_table = term_frequency_table(documents, uniquewords, table)
-
 doc_freq = document_frequency_table(table)
-for key, value in doc_freq.items():
-  print(f"{key}: {value}")
+
+inverse_doc_freq =  inverse_document_frequency(documents, doc_freq)
+for key, value in inverse_doc_freq.items():
+  print(f"{key} {value}")
