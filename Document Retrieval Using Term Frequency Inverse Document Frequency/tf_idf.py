@@ -60,6 +60,15 @@ def inverse_document_frequency(documents ,doc_freq):
     inv_doc_freq[key] = round(math.log10(len(documents)/value),3)
   return inv_doc_freq
 
+def tf_idf(documents ,uniquewords): #, freq_table, inverse_doc_freq
+  all_docs_tf_idf = []
+  for _ in documents:
+    table = [[0 for i in range(4)] for i in range(len(uniquewords)+1)]
+    table[0][0:4] = "TERM", "TF", "IDF", "TF-IDF"
+    df = pd.DataFrame(table)
+    all_docs_tf_idf.append(df.to_string(index = False, header=False))
+  return all_docs_tf_idf
+    
 document1 = "I have been playing video games since this morning."
 document2 = "My favourite game has always been GTAV. It is an amazing game"
 document3 = "Through online games, people can collectively solve large-scale computational problems."
@@ -70,7 +79,8 @@ table = table_of_words(documents)
 uniquewords = unique_words(table)
 freq_table = term_frequency_table(documents, uniquewords, table)
 doc_freq = document_frequency_table(table)
-
 inverse_doc_freq =  inverse_document_frequency(documents, doc_freq)
-for key, value in inverse_doc_freq.items():
-  print(f"{key} {value}")
+
+termF_invDF = tf_idf(documents, uniquewords)
+for i in termF_invDF:
+  print(i)
