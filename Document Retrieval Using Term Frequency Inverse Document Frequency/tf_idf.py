@@ -6,10 +6,14 @@ from collections import defaultdict
 
 stop_words = set(stopwords.words('english')) 
 
+#=======================================================METHOD==============================================================
+
 #row_of_words returns a list of words in lower case which are alpha-numeric and not included in stop words.
 def row_of_words(single_document):
   words = [word for word in word_tokenize(single_document.lower()) if word not in stop_words and word.isalnum()]
   return words
+
+#=======================================================METHOD==============================================================
 
 #The function table_of_words uses above function row_of_words to generate lists of  pre-processed words of each document. Each list contains preprocessed words from each document,  means no of lists = no of documents. These lists are the appended into another list which results into a lists within a list. Which serves a table.
 def table_of_words(documents):
@@ -17,6 +21,8 @@ def table_of_words(documents):
   for document in documents:
     table.append(row_of_words(document))
   return table
+
+#=======================================================METHOD==============================================================
 
 #unique_words is a function that extracts unique words from table and returns a list
 def unique_words(table):
@@ -26,6 +32,8 @@ def unique_words(table):
       if word not in u_words:
         u_words.append(word)
   return u_words
+
+#=======================================================METHOD==============================================================
   
 def term_frequency_table(list_documents, list_uniquewords, table_of_words):
   # The number of documents + 1 = number of columns.
@@ -45,6 +53,8 @@ def term_frequency_table(list_documents, list_uniquewords, table_of_words):
   
   return frequency_table
 
+#=======================================================METHOD==============================================================
+
 def document_frequency_table(table):
   doc_freq_dict = defaultdict(int)
   merged = []
@@ -53,6 +63,8 @@ def document_frequency_table(table):
   for word in merged:
     doc_freq_dict[word] += 1
   return doc_freq_dict
+
+#=======================================================METHOD==============================================================
   
 def inverse_document_frequency(documents ,doc_freq):
   inv_doc_freq = defaultdict(float)
@@ -60,8 +72,11 @@ def inverse_document_frequency(documents ,doc_freq):
     inv_doc_freq[key] = round(math.log10(len(documents)/value),3)
   return inv_doc_freq
 
-def tf_idf(documents ,uniquewords, freq_table, inverse_doc_freq): 
+#=======================================================METHOD==============================================================
+
+def tf_idf_tables_of_every_document(documents ,uniquewords, freq_table, inverse_doc_freq): 
   all_docs_tf_idf = []
+  
   for doc_index, doc in enumerate(documents):
     table = [[0 for i in range(4)] for i in range(len(uniquewords)+1)]
     
@@ -88,27 +103,44 @@ def tf_idf(documents ,uniquewords, freq_table, inverse_doc_freq):
         row[3] = round(row[1] * row[2], 3)
       
     all_docs_tf_idf.append(table)
+
   return all_docs_tf_idf
-    
-document1 = "Recent advances in artificial intelligence, particularly in large language models, have revolutionized how machines process and generate human-like text. These models are trained on vast datasets encompassing books, articles, and websites, allowing them to identify patterns and relationships between words and concepts. The core challenge lies in developing algorithms that can understand context and nuance, moving beyond simple keyword matching. This progress raises important questions about the future of work, creativity, and the ethical implications of increasingly capable AI systems."
 
-document2 = "In the field of data science, the ability to extract meaningful insights from unstructured text data is a critical skill. Techniques such as natural language processing (NLP) are employed to categorize documents, gauge sentiment, and identify prevalent themes. The fundamental step in this process often involves converting text into a numerical format, where the importance of specific words within a document and across a corpus can be quantified. This quantitative analysis allows researchers and businesses to make data-driven decisions based on trends found in customer feedback, news articles, or technical reports."
+#=======================================================METHOD==============================================================
 
-document3 = "The analysis of historical climate documents and scientific papers is crucial for modeling future environmental changes. Researchers systematically process decades of reports to identify key terms and trends related to temperature rise, carbon emissions, and ecosystem degradation. By applying statistical models to this corpus of text, scientists can track the frequency and evolution of critical concepts over time. This textual evidence, combined with numerical data, strengthens the consensus on human-driven climate change and informs international policy debates."
+def final_vectors_of_every_document(tf_idf_tables_list):
+  lengths = len(tf_idf_tables_list[0])
+  vector_table = [[0 for a in range(lengths)] for a in range(len(tf_idf_tables_list) + 1)]
+  return vector_table
 
-document4 = "Modern medical research increasingly relies on computational tools to sift through millions of academic journals and patient records. Text mining algorithms help discover connections between symptoms, genes, and treatments by analyzing the language used in scientific literature. Identifying the most significant terms and phrases across a collection of clinical studies can accelerate drug discovery and highlight emerging health threats. This approach enables a more efficient synthesis of global knowledge, ultimately aiming to improve diagnostic accuracy and patient outcomes through evidence-based medicine."
 
-documents = [document1, document2, document3, document4]
+document1 = "AI models are trained on massive text datasets to understand and generate human language. This involves complex algorithms that move beyond keywords to grasp context. The technology's rapid growth prompts debates about its ethics and societal impact."
+document2 = "Data science uses NLP to turn text into numbers, finding key themes in documents. A core technique weighs word importance within and across texts. This lets analysts spot trends in reviews, articles, or reports for better decisions."
+document3 = "Scientists analyze climate reports to track key terms like carbon emissions over time. Text analysis reveals trends in the research, strengthening evidence for human-driven change. This informs vital policy discussions on global warming."
+
+documents = [document1, document2, document3]
 
 table = table_of_words(documents)
 uniquewords = unique_words(table)
 freq_table = term_frequency_table(documents, uniquewords, table)
 doc_freq = document_frequency_table(table)
-inverse_doc_freq =  inverse_document_frequency(documents, doc_freq)
-termF_invDF = tf_idf(documents, uniquewords, freq_table, inverse_doc_freq)
+inverse_doc_freq_dictionary =  inverse_document_frequency(documents, doc_freq)
+tf_idf_tables_list = tf_idf_tables_of_every_document(documents, uniquewords, freq_table, inverse_doc_freq_dictionary)
+vector_table =  final_vectors_of_every_document(tf_idf_tables_list)
 
-for table_number, table in enumerate(termF_invDF):
-  print(f"_______DOCUMENT_NUMBER_{table_number + 1}_______"),
-  df = pd.DataFrame(table)
-  print(df.to_string(index=False, header=False))
-  print("\n")
+#for table_number, table in enumerate(tf_idf_tables_list):
+#  print(f"_______DOCUMENT_NUMBER_{table_number + 1}_______"),
+#  df = pd.DataFrame(table)
+#  print(df.to_string(index=False, header=False))
+#  print("\n")
+
+df = pd.DataFrame(vector_table)
+print(df.to_string(index=False, header=False))
+print("\n")
+for i in vector_table:
+  print(f"Row length od vector table {len(i)}")
+print("\n")
+print(f"The number of unique words {len(uniquewords)}")
+
+
+
