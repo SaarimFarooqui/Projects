@@ -79,8 +79,15 @@ def replacement_of_below_method(documents, uniquewords, freq_table, inverse_doc_
   columns = len(uniquewords) + 1
   vector_table = [[0 for _ in range(columns)] for _ in range(rows)]
   
-  #for row_index, row in enumerate(vector_table):
+  for row_index, row in enumerate(vector_table):
+    row[0] = f" DOCUMENT:{row_index} "
     
+  vector_table[0][0] = " DOCs / TERMS "
+  
+  for index, word in enumerate(uniquewords):
+    vector_table[0][index+1] = word
+  
+  
   return vector_table
 #=======================================================METHOD==============================================================
 
@@ -161,13 +168,8 @@ vector_table =  replacement_of_below_method(documents, uniquewords, freq_table, 
 #  print(df.to_string(index=False, header=False))
 #  print("\n")
 
-#df = pd.DataFrame(vector_table)
-#df.to_html("table.html", index = False, header = False)
+for index, word in doc_freq.items():
+  print(f"{index} {word}")
 
-for row in vector_table:
-  print(row)
-print("\n")
-print("\n")
-print("\n")
-df = pd.DataFrame(freq_table)
-print(df.to_string(index = False, header = False))
+#df = pd.DataFrame(vector_table)
+#df.to_html("VectorTable.html", index = False, header = False)
