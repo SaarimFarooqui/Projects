@@ -74,7 +74,7 @@ def inverse_document_frequency(documents ,doc_freq):
   return inv_doc_freq
 
 #=======================================================METHOD==============================================================
-def replacement_of_below_method(documents, uniquewords, freq_table, inverse_doc_freq):
+def tf_x_idf_vectorTable(documents, uniquewords, freq_table, inverse_doc_freq):
   rows = len(documents) + 1
   columns = len(uniquewords) + 1
   vector_table = [[0 for _ in range(columns)] for _ in range(rows)]
@@ -87,6 +87,12 @@ def replacement_of_below_method(documents, uniquewords, freq_table, inverse_doc_
   for index, word in enumerate(uniquewords):
     vector_table[0][index+1] = word
   
+  inv_doc_freqs = list(inverse_doc_freq.values())
+  
+  for row_index, row in enumerate(vector_table):
+    if row_index != 0:
+      for idf_index, idf in enumerate(inv_doc_freqs):
+        row[idf_index+1] = round(freq_table[idf_index+1][row_index] * idf, 3) 
   
   return vector_table
 #=======================================================METHOD==============================================================
@@ -125,27 +131,8 @@ def tf_idf_tables_of_every_document(documents ,uniquewords, freq_table, inverse_
 
 #=======================================================METHOD==============================================================
 
-def final_vectors_of_every_document(tf_idf_tables_list, uniquewords):
-  lengths = len(tf_idf_tables_list[0])
-  vector_table = [[0 for a in range(lengths)] for a in range(len(tf_idf_tables_list) + 1)]
-  for index, row in enumerate(vector_table):
-    row[0] = f"Doc{index} TF-IDF"
-  vector_table[0][0] = "DOCS/TERM"
-  
-  for index, word in enumerate(uniquewords):
-    vector_table[0][index+1] = word
-  
-  for tab_index, table in enumerate(tf_idf_tables_list):
-    tf_idfs = []
-    for row_index, row in enumerate(table):
-      if row_index != 0:
-        tf_idfs.append(row[3])
-        
-    for term_index, term in enumerate(tf_idfs):
-      vector_table[tab_index+1][term_index+1] = term
-      
-  return vector_table
 
+#===========================================================================================================================
 
 document1 = "AI models are trained on massive text datasets to understand and generate human language."
 document2 = "Data science uses NLP to turn text into numbers, finding key themes in documents."
@@ -158,18 +145,16 @@ uniquewords = unique_words(table)
 freq_table = term_frequency_table(documents, uniquewords, table)
 doc_freq = document_frequency_table(table)
 inverse_doc_freq_dictionary =  inverse_document_frequency(documents, doc_freq)
-#tf_idf_tables_list = tf_idf_tables_of_every_document(documents, uniquewords, freq_table, inverse_doc_freq_dictionary)
-#vector_table =  final_vectors_of_every_document(tf_idf_tables_list, uniquewords)
-vector_table =  replacement_of_below_method(documents, uniquewords, freq_table, inverse_doc_freq_dictionary)
 
-#for table_number, table in enumerate(tf_idf_tables_list):
-#  print(f"_______DOCUMENT_NUMBER_{table_number + 1}_______"),
-#  df = pd.DataFrame(table)
-#  print(df.to_string(index=False, header=False))
-#  print("\n")
-
-for index, word in doc_freq.items():
-  print(f"{index} {word}")
+vector_table =  tf_x_idf_vectorTable(documents, uniquewords, freq_table, inverse_doc_freq_dictionary)
 
 #df = pd.DataFrame(vector_table)
 #df.to_html("VectorTable.html", index = False, header = False)
+
+tf_idf_tables_list = tf_idf_tables_of_every_document(documents, uniquewords, freq_table, inverse_doc_freq_dictionary)
+
+for table_number, table in enumerate(tf_idf_tables_list):
+  print(f"_______DOCUMENT_NUMBER_{table_number + 1}_______"),
+  df = pd.DataFrame(table)
+  print(df.to_string(index=False, header=False))
+  print("\n")
